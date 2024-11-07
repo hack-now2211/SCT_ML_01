@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <title>House Price Predictor</title>
+    <style>
+        /* Your CSS styles */
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        #predictionForm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            /* Two equal columns */
+            gap: 10px;
+            /* Space between input fields */
+            max-width: 600px;
+            /* Max width for the form */
+            margin: 0 auto;
+            /* Center the form */
+            padding: 20px;
+            /* Space inside the form */
+            border: 2px solid #451952;
+            /* Box around the form */
+            border-radius: 8px;
+            /* Rounded corners */
+            background-color: #E8BCB9;
+            /* Optional background color */
+        }
+        
+        label {
+            margin-right: 10px;
+            /* Space between label and input */
+        }
+        
+        button {
+            grid-column: 1 / -1;
+            /* Span the button across both columns */
+            padding: 10px 20px;
+            /* Button padding */
+            margin-top: 20px;
+            /* Space above the button */
+            cursor: pointer;
+            /* Pointer on hover */
+        }
+        
+        @media (max-width: 600px) {
+            #predictionForm {
+                grid-template-columns: 1fr;
+                /* Single column for smaller screens */
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    {% if prediction_text %}
+    <h2>{{ prediction_text }}</h2>
+    {% else %}
+    <div class="container">
+        <div class="row">
+            <div class="card" style="width:100%; height:100%; margin-top: 50px">
+                <div class="card-header" style="text-align: center">
+                    <h1>WELCOME TO HOUSE PRICE PREDICTION</h1>
+                </div>
+                <div class="card-body" style="text-align: center">
+                    <h4>Want to predict Sales Price of Houses?</h4>
+                    <h5>Try filling out the details below:</h5>
+                    <p>R² Score of the Model: {{ r2_score }}</p>
+
+                    <form id="predictionForm" accept-charset="utf-8" method="post" onsubmit="event.preventDefault(); send_data();">
+                        <label for="GrLivArea">Above Ground Living Area (GrLivArea):</label>
+                        <input type="number" step="any" id="GrLivArea" name="GrLivArea" required>
+
+                        <label for="BedroomAbvGr">Bedrooms Above Ground (BedroomAbvGr):</label>
+                        <input type="number" step="any" id="BedroomAbvGr" name="BedroomAbvGr" required>
+
+                        <label for="FullBath">Full Bathrooms (FullBath):</label>
+                        <input type="number" step="any" id="FullBath" name="FullBath" required>
+
+                        <label for="TotRmsAbvGrd">Total Rooms Above Ground (TotRmsAbvGrd):</label>
+                        <input type="number" step="any" id="TotRmsAbvGrd" name="TotRmsAbvGrd" required>
+
+                        <label for="LotArea">Lot Area (LotArea):</label>
+                        <input type="number" step="any" id="LotArea" name="LotArea" required>
+
+                        <label for="OverallQual">Overall Quality (OverallQual):</label>
+                        <input type="number" step="any" id="OverallQual" name="OverallQual" required>
+
+                        <label for="OverallCond">Overall Condition (OverallCond):</label>
+                        <input type="number" step="any" id="OverallCond" name="OverallCond" required>
+
+                        <label for="TotalBsmtSF">Total Basement Area (TotalBsmtSF):</label>
+                        <input type="number" step="any" id="TotalBsmtSF" name="TotalBsmtSF" required>
+
+                        <label for="1stFlrSF">First Floor Area (1stFlrSF):</label>
+                        <input type="number" step="any" id="1stFlrSF" name="1stFlrSF" required>
+
+                        <button class="btn btn-primary form-control">Predict Price</button>
+                    </form>
+                    <br><br>
+                    <div class="col-md-12" style="text-align:center;">
+                        <h2><span id="prediction"></span></h2>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function send_data() {
+            var fd = new FormData(document.getElementById('predictionForm'));
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/predict', true);
+            document.getElementById("prediction").innerHTML = "Wait predicting price!...";
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    document.getElementById('prediction').innerHTML = "" + xhr.responseText;
+                }
+            };
+            xhr.send(fd);
+        }
+    </script>
+</body>
+
+</html>
